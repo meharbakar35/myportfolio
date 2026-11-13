@@ -294,6 +294,21 @@ dialog::backdrop{background:rgba(10,13,14,.86)}
 }
 @media(hover:none){a.card:hover{transform:none;box-shadow:none}}
 @media(max-height:480px) and (orientation:landscape){.hero{padding:20px 0 22px}.top{position:static}}
+
+/* compact skill chips on phones */
+.chip-more{display:none}
+@media(max-width:620px){
+  .panel{gap:7px}
+  .chip{font-size:13.5px;padding:6px 11px;line-height:1.35}
+  .panel.collapsed span.chip:nth-of-type(n+10){display:none}
+  .chip-more{display:inline-flex;align-items:center;justify-content:center;flex:1 1 100%;margin-top:4px;min-height:42px;font-family:var(--body);font-size:14px;font-weight:500;color:var(--accent);background:transparent;border:1px dashed #b9cfc2;border-radius:999px;cursor:pointer}
+  .chip-more:hover{background:var(--accent-tint)}
+}
+
+@media(max-width:620px){
+  .tabs{overflow:visible}
+  .tab{flex:1 1 0;min-width:0;white-space:normal;text-align:center;line-height:1.25;padding:9px 6px;font-size:13.5px}
+}
 </style>
 </head>
 <body>
@@ -847,6 +862,26 @@ lb.addEventListener('click', function(e){ if (e.target === lb) lb.close(); });
   document.addEventListener('click', function(e){ if (!menu.contains(e.target) && e.target !== btn) set(false); });
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape') set(false); });
   window.addEventListener('resize', function(){ if (window.innerWidth > 800) set(false); });
+})();
+
+/* collapse long skill lists on phones */
+(function(){
+  var LIMIT = 9;
+  Array.prototype.forEach.call(document.querySelectorAll('.panel'), function(p){
+    var chips = p.querySelectorAll('span.chip');
+    if (chips.length <= LIMIT) return;
+    var btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'chip-more';
+    function label(){ btn.textContent = p.classList.contains('collapsed') ? 'Show all ' + chips.length + ' skills' : 'Show fewer'; }
+    p.classList.add('collapsed'); label();
+    btn.setAttribute('aria-expanded','false');
+    btn.addEventListener('click', function(){
+      p.classList.toggle('collapsed');
+      btn.setAttribute('aria-expanded', p.classList.contains('collapsed') ? 'false' : 'true');
+      label();
+    });
+    p.appendChild(btn);
+  });
 })();
 </script>
 </body>
